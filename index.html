@@ -1,0 +1,81 @@
+<!DOCTYPE HTML>
+<html lang="zh-TW" >
+    <head>
+        <meta charset="UTF-8" >
+        <title>測試HTML5 audio</title>
+        <meta name="description" content="html5 audio" >
+        <meta name="keywords" content="html5,audio" >
+        <meta name="author" content="yume" >
+        <script src="https://code.jquery.com/jquery-1.12.0.min.js" ></script>
+    </head>
+    <body>
+        <audio id="myPlayer" ontimeupdate="getPlaySec(Math.floor(this.currentTime))" controls>
+            <source src="Sunflower.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+        <article id="article"></article>
+        <button onclick="setPlaySpeed()" type="button">Set video to be play in slow motion</button><br>
+    </body>
+    <script>
+        var p = document.getElementById("myPlayer");
+        var nowSection = -1;
+        var len = 0;
+        var jsonData = null;
+        //init
+        $(function() {
+            $.ajax({
+                type : 'GET',
+                dataType : 'json',
+                url: 'document.json',
+                success : function(data) {
+                    jsonData = data.list;
+                    len = jsonData.length;
+                    $.each(data.list, function(index, obj){
+                        $("#article").append('<section class="outfocus" id="section_' + index + '" onclick="setPlaySec(' + obj.startSec + ')">' + obj.content + '(start from:' + obj.startSec + 'sec)</section>');
+                    });
+                } 
+            });
+        });
+        function setPlaySpeed() {
+            p.playbackRate = 2;
+        }
+        function setPlaySec(sec) {
+            p.currentTime = sec;
+            p.play(); 
+        }
+        function getPlaySec(sec) {
+            for (var i = 0 ; i < len ; i++) {
+                if (i != len-1) {
+                    if (sec >= jsonData[i].startSec && sec < jsonData[i+1].startSec) {
+                        if (i != nowSection) {
+                            changeSection(i);
+                        }
+                    }
+                } else {
+                    if (sec >= jsonData[i].startSec) {
+                        if (i != nowSection) {
+                            changeSection(i);
+                        }
+                    }
+                }
+            }
+        }
+        function changeSection(index) {
+            nowSection = index;
+            console.log(index);
+            for (var i = 0 ; i < len ; i++) {
+                if (i == index) {
+                    $("#section_"+i).toggleClass("onfocus");
+                } else {
+                    $("#section_"+i).toggleClass("outfocus");
+                }
+            }
+            
+        }
+    </script>
+    <style type="text/css">
+        section {cursor: pointer; padding:3px;}
+        .onfocus {background-color: yellow;}
+        .outfocus {background-color: transparent;}
+    </style>
+</html>
