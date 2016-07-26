@@ -6,15 +6,30 @@
         <meta name="description" content="html5 audio" >
         <meta name="keywords" content="html5,audio" >
         <meta name="author" content="yume" >
-        <script src="https://code.jquery.com/jquery-1.12.0.min.js" ></script>
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
+        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     </head>
     <body>
-        <audio id="myPlayer" ontimeupdate="getPlaySec(Math.floor(this.currentTime))" controls>
+        <audio id="myPlayer" controls class="embed-responsive-item">
             <source src="Sunflower.mp3" type="audio/mpeg">
             Your browser does not support the audio element.
         </audio>
+        <div class="btn-group">
+            <button type="button" class="btn btn-warning">speed</button>
+            <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown">
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a onclick="setPlaySpeed(1)">X1</a></li>
+                <li><a onclick="setPlaySpeed(1.5)">X1.5</a></li>
+                <li><a onclick="setPlaySpeed(2)">X2</a></li>
+                <li><a onclick="setPlaySpeed(2.5)">X2.5</a></li>
+                <li><a onclick="setPlaySpeed(3)">X3</a></li>
+            </ul>
+        </div>
+        <br>
         <article id="article"></article>
-        <button onclick="setPlaySpeed()" type="button">Set video to be play in slow motion</button><br>
     </body>
     <script>
         var p = document.getElementById("myPlayer");
@@ -31,22 +46,38 @@
                     jsonData = data.list;
                     len = jsonData.length;
                     $.each(data.list, function(index, obj){
-                        $("#article").append('<section class="outfocus" id="section_' + index + '" onclick="setPlaySec(' + obj.startSec + ')">' + obj.content + '(start from:' + obj.startSec + 'sec)</section>');
+                        $("#article").append('<section class="outfocus" id="section_' + index + '" onclick="setPlaySec(' + obj.startSec + ')"><h4>' + obj.content + '</h4><h6>(start from:' + obj.startSec + 'sec)</h6></section>');
                     });
                 } 
             });
+            //監聽時間軸有變動時的事件
+            p.ontimeupdate = function (e) {
+                getPlaySec(this.currentTime);
+            };
+            //監聽video播完時的事件
+            p.addEventListener('ended',myHandler,false);
         });
-        function setPlaySpeed() {
-            p.playbackRate = 2;
+        function myHandler(e) {
+            funOutfocus();
+        }
+        //設定播放速度
+        function setPlaySpeed(i) {
+            p.playbackRate = i;
         }
         function setPlaySec(sec) {
             p.currentTime = sec;
-            p.play(); 
+            if (p.paused) {
+                p.pause();
+            } else {
+                p.play();
+            }
         }
         function getPlaySec(sec) {
             for (var i = 0 ; i < len ; i++) {
                 if (i != len-1) {
-                    if (sec >= jsonData[i].startSec && sec < jsonData[i+1].startSec) {
+                    if (i == 0 && sec < jsonData[i].startSec) {
+                        changeSection(-1);
+                    } else if (sec >= jsonData[i].startSec && sec < jsonData[i+1].startSec) {
                         if (i != nowSection) {
                             changeSection(i);
                         }
@@ -61,20 +92,23 @@
             }
         }
         function changeSection(index) {
-            nowSection = index;
-            console.log(index);
-            for (var i = 0 ; i < len ; i++) {
-                if (i == index) {
-                    $("#section_"+i).toggleClass("onfocus");
-                } else {
-                    $("#section_"+i).toggleClass("outfocus");
-                }
+		    nowSection = index;
+            if (index == -1) {
+                funOutfocus();
+            } else {
+                funOutfocus();
+                funOnfocus(index);
             }
-            
+        }
+        function funOutfocus() {
+            $("section").removeClass("onfocus").addClass("outfocus");
+        }
+        function funOnfocus(index) {
+            $("#section_"+index).removeClass("outfocus").addClass("onfocus");
         }
     </script>
     <style type="text/css">
-        section {cursor: pointer; padding:3px;}
+        section {cursor: pointer;padding:3px;margin:auto 10px;}
         .onfocus {background-color: yellow;}
         .outfocus {background-color: transparent;}
     </style>
