@@ -1,0 +1,4 @@
+section {cursor: pointer;padding:3px;margin:auto 10px;}
+.onfocus {background-color: yellow;}
+.outfocus {background-color: transparent;}
+.scroller {overflow-y:scroll; height:300px; width:400px;}

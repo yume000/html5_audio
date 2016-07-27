@@ -29,13 +29,14 @@
             </ul>
         </div>
         <br>
-        <article id="article"></article>
+        <article id="article" class="scroller"></article>
     </body>
     <script>
         var p = document.getElementById("myPlayer");
         var nowSection = -1;
         var len = 0;
         var jsonData = null;
+        var posAry = [];
         //init
         $(function() {
             $.ajax({
@@ -47,6 +48,9 @@
                     len = jsonData.length;
                     $.each(data.list, function(index, obj){
                         $("#article").append('<section class="outfocus" id="section_' + index + '" onclick="setPlaySec(' + obj.startSec + ')"><h4>' + obj.content + '</h4><h6>(start from:' + obj.startSec + 'sec)</h6></section>');
+                        defaultPos = $("#article").position().top;
+                        posAry[index] = $("#section_"+index).position().top;
+                        console.log($("#section_"+index).position().top);
                     });
                 } 
             });
@@ -93,23 +97,24 @@
         }
         function changeSection(index) {
 		    nowSection = index;
-            if (index == -1) {
-                funOutfocus();
-            } else {
-                funOutfocus();
-                funOnfocus(index);
-            }
+            funOutfocus();
+            funOnfocus(index);
         }
         function funOutfocus() {
             $("section").removeClass("onfocus").addClass("outfocus");
         }
         function funOnfocus(index) {
-            $("#section_"+index).removeClass("outfocus").addClass("onfocus");
+            if (index != -1) {
+                $("#section_"+index).removeClass("outfocus").addClass("onfocus");
+                $("#article").animate({
+                    scrollTop: posAry[index]-defaultPos //$("#section_"+index).offset().top
+                },600);
+            } else {
+                $("#article").animate({
+                    scrollTop: 0
+                },600);
+            }
         }
     </script>
-    <style type="text/css">
-        section {cursor: pointer;padding:3px;margin:auto 10px;}
-        .onfocus {background-color: yellow;}
-        .outfocus {background-color: transparent;}
-    </style>
+    <link rel="stylesheet" href="style.css">
 </html>
