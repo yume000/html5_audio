@@ -33,6 +33,11 @@ function myHandler(e) {
 //設定播放速度
 function setPlaySpeed(i) {
     p.playbackRate = i;
+    if (i == 1) {
+        $("#btnSpeed").html("normal");
+    } else {
+        $("#btnSpeed").html("x" + i);
+    }
 }
 function setPlaySec(sec) {
     p.currentTime = sec;
