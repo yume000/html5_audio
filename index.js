@@ -86,3 +86,21 @@ function funOnfocus(index) {
         },600);
     }
 }
+
+/* -------------------------------------- */
+
+//Does a switch of the play/pause with one button.
+function playPause(){
+    //Checks to see if the song is paused, if it is, play it from where it left off otherwise pause it.
+    if (p.paused){
+        p.play();
+    }else{
+        p.pause();
+    }
+}
+
+//Stop song by setting the current time to 0 and pausing the song.
+function stop(){
+  p.currentTime = 0;
+  p.pause();
+}

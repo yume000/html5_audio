@@ -2,3 +2,21 @@ section {cursor: pointer;padding:3px;margin:auto 10px;}
 .onfocus {background-color: yellow;}
 .outfocus {background-color: transparent;}
 .scroller {overflow-y:scroll; height:300px; width:400px;}
+.arrow {
+    float: left;
+    margin: auto 3px;
+    width: 0px;
+    height: 0px;
+    border-width: 15px;
+    border-style: solid;
+    border-color: transparent transparent transparent #ffa07a; /*t r b l*/
+}
+.square {
+    float: left;
+    margin: auto 3px;
+    width: 0px;
+    height: 0px;
+    border-width: 10px;
+    border-style: solid;
+    border-color: #ffa07a #ffa07a #ffa07a #ffa07a; /*t r b l*/
+}
